@@ -1,8 +1,11 @@
-# Wolfram Language FunctionCompile CI template
+# Wolfram Language LibraryLink Compile CI template
 
-This repository is a template illustrating [compilation of Wolfram Language functions](https://reference.wolfram.com/language/guide/CodeCompilation.html) as part of a continuous integration (CI) workflow using [GitHub Actions](https://github.com/features/actions).
-The [GitHub Actions workflow](.github/workflows/compile-wl-functions.yml) and corresponding [Wolfram Language script](compile.wls) in this repository run automatically on each push, and compile the function source files in the [`/functions`](functions) directory into shared libraries for macOS (Apple Silicon not yet supported), Windows, and Linux.
-These shared libraries are suitable for linking into external programs, and can also be loaded into a Wolfram Language kernel at runtime using [`LibraryFunctionLoad`](https://reference.wolfram.com/language/ref/LibraryFunctionLoad.html).
+__Update 2025. Adapted to a new CI API and LibraryLink__
+
+This repository is a template illustrating compilation of `LibraryLink` functions written in C as part of a continuous integration (CI) workflow using [GitHub Actions](https://github.com/features/actions).
+The [GitHub Actions workflow](.github/workflows/compile-wl-functions.yml) and corresponding [Wolfram Language script](compile.wls) in this repository run automatically on each push, and compile the function source files in the [`/c`](c) directory into shared libraries for macOS (Apple Silicon not yet supported), Windows, and Linux.
+
+These shared libraries are suitable for linking into external programs, and can also be loaded into a Wolfram Language kernel at runtime.
 
 
 ## Using this template
@@ -89,39 +92,13 @@ Make sure to remove any extraneous whitespace from either side of the entitlemen
 
 ### 4. Add a new function to the repository
 
-The [compilation script](compile.wls) compiles function source files in the [`/functions`](functions) directory of the repository.
-A function source file must have `.wl`, `.m`, `.wxf`, or `.mx` as its extension.
-Files in subdirectories of `/functions` (e.g. `/functions/subdir/file.wl`) are ignored. Resulting compiled libraries are named with the base name of the source function file, so `/functions/addone.wl` is compiled to `addone.dylib` (or `.dll` or `.so`, depending on the target operating system).
+The [compilation script](compile.wls) compiles function source files in the [`/c`](c) directory of the repository. 
 
-Each function source file (e.g. [`/functions/addone.wl`](functions/addone.wl)) should return a [`Function`](https://reference.wolfram.com/language/ref/Function.html) expression with the appropriate [type annotations](https://reference.wolfram.com/language/ref/Typed.html) for compilation with [`FunctionCompile`](https://reference.wolfram.com/language/ref/FunctionCompile.html)/[`FunctionCompileExportLibrary`](https://reference.wolfram.com/language/ref/FunctionCompileExportLibrary.html).
-
-You can commit and push a new function source file to your repository using the [Git command-line interface](https://docs.github.com/en/github/managing-files-in-a-repository/adding-a-file-to-a-repository-using-the-command-line) or a graphical Git tool like [GitHub Desktop](https://desktop.github.com/),
-or you can use [the GitHub web interface](https://docs.github.com/en/github/managing-files-in-a-repository/creating-new-files).
-The web interface is the easiest option for a quick test of your newly configured repository.
-
-Navigate to the [`/functions`](functions) directory listing and click **Add file > Create new file**:
-
-!["/functions" directory listing with "Add file > Create new file" button](.github/images/5-Create-new-file.png)
-
-Name the file `power.wl` and paste the following as its contents:
-```wl
-Function[Typed[num, "MachineInteger"], num ^ num]
-```
-
-Optionally edit the commit message, and then click **Commit new file**:
-
-!["Commit new file" screen showing new file named "power.wl" with "Function[...]" as contents](.github/images/6-Commit-new-file.png)
-
+Navigate to **Actions** and manually start the process.
 
 ### 5. Download and use a compiled function library
 
-If you switch to the **Actions** tab, you should see the new workflow run triggered by your commit in step 4:
-
-!["Actions" tab showing workflow run triggered by a new commit](.github/images/7-Workflow-run-list.png)
-
-Click on the run to see the status of each job in the run:
-
-![Workflow run screen showing details of an in-progress run](.github/images/8-Workflow-run-detail.png)
+If you switch to the **Actions** tab, you should see the new workflow run triggered by your action in step 4.
 
 This initial run may take 10-15 minutes to finish.
 Once all jobs succeed, the produced artifacts will be displayed beneath the list of jobs:
@@ -130,17 +107,3 @@ Once all jobs succeed, the produced artifacts will be displayed beneath the list
 
 Each artifact is a compressed ZIP file containing the compiled function libraries for the platform indicated in its name.
 Download and uncompress the artifact for your platform of choice.
-
-Load the compiled function library for the new `power` function into a Wolfram Language session using [`LibraryFunctionLoad`](https://reference.wolfram.com/language/ref/LibraryFunctionLoad.html):
-```wl
-In[2]:= func = LibraryFunctionLoad["/path/to/CompiledFunctionLibraries-MacOSX-x86-64/power.dylib"]
-
-Out[2]= CompiledCodeFunction[...]
-```
-
-The loaded function can be now used interactively and in code:
-```wl
-In[3]:= func[42]
-
-Out[3]= 150130937545296572356771972164254457814047970568738777235893533016064
-```
