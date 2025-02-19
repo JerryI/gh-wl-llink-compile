@@ -1,5 +1,5 @@
-name: Compile WL function(s)
-on: [push]
+name: Compile LLink
+on: workflow_dispatch
 jobs:
   FunctionCompile-Windows-x86-64:
     runs-on: windows-latest
