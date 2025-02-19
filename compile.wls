@@ -1,97 +1,55 @@
 #!/usr/bin/env wolframscript
 
-$sourceDirectory = "functions"
-$sourceFileExtensionPattern = "wl" | "m" | "wxf" | "mx"
+$sourceDirectory = "c"
+$buildDirectory = "LibraryResources"
 
-$buildDirectory = "compiled"
 Quiet@CreateDirectory[$buildDirectory]
 
-$platformLibraryExtension = $OperatingSystem // Replace[{
-    "Windows" -> "dll",
-    "MacOSX" -> "dylib",
-    "Unix" -> "so",
-    _ -> None
-}]
-If[
-    (* if the $OperatingSystem is not a known value *)
-    !StringQ[$platformLibraryExtension],
-    (* then print a failure message and exit *)
-    Print@TemplateApply[
-        "ERROR: Unsupported $OperatingSystem \"`1`\"",
-        $OperatingSystem
-    ];
-    Exit[1]
-]
+Get["CCompilerDriver`"]; 
+Get["LibraryLink`"];
 
-functionPathsToCompile = FileNames[
-    __ ~~ "." ~~ $sourceFileExtensionPattern,
-    $sourceDirectory
-]
+getLibraryLinkVersion[] := 
+Which[
+    $VersionNumber >= 14.1, 
+        With[{n = LibraryVersionInformation[FindLibrary["demo"] ]["WolframLibraryVersion"]},
+            If[!NumberQ[n], 7, n]
+        ], 
+    $VersionNumber >= 13.1, 
+        7, 
+    $VersionNumber >= 12.1, 
+        6, 
+    $VersionNumber >= 12.0, 
+        5, 
+    $VersionNumber >= 11.2, 
+        4, 
+    $VersionNumber >= 10.0, 
+        3, 
+    $VersionNumber >= 9.0, 
+        2, 
+    True, 
+        1
+]; 
 
-If[
-    (* if no function files were found *)
-    Length[functionPathsToCompile] === 0,
-    (* then print a failure message and exit *)
-    Print@TemplateApply[
-        "ERROR: No function source files found in directory \"`1`\"",
-        $sourceDirectory
-    ];
-    Exit[1]
-]
+build[lib_String, opts: OptionsPattern[CreateLibrary]] := 
+Block[{$directory, $libSrc, $libDir, $linkerOptions}, 
+    Echo["Building "<>lib]; 
+    
+    $libSrc = File[lib]; 
 
-Print["Function(s) to compile: ", functionPathsToCompile]
+    $libDir = FileNameJoin[{
+        $buildDirectory, 
+        $SystemID <> "-v" <> ToString[getLibraryLinkVersion[] ]
+    }]; 
 
-compilationResults = functionPathsToCompile // Map[
-    Function[functionPath, Module[{
-        compiledFunctionPath = FileNameJoin[{
-            $buildDirectory,
-            FileBaseName[functionPath] <> "." <> $platformLibraryExtension
-        }],
-        functionExpression,
-        compilationResult
-    },
 
-        (* import function *)
-        Print@TemplateApply["Importing function from '`1`'...", {functionPath}];
+    If[!FileExistsQ[$libDir], CreateDirectory[]];
 
-        functionExpression = Import[functionPath];
-        If[
-            (* if the import failed *)
-            FailureQ[functionExpression],
-            (* then print a failure message and exit *)
-            Print@TemplateApply["ERROR: failed to import function from '`1`'.", {functionPath}];
-            Exit[1]
-        ];
+    CreateLibrary[$libSrc, FileBaseName[lib], 
+        "TargetDirectory" -> $libDir, 
+        "Debug" -> True, 
+        opts
+    ]
+]; 
 
-        (* compile function *)
-        Print@TemplateApply[
-            "Compiling function from '`1`' to '`2`'...",
-            {functionPath, compiledFunctionPath}
-        ];
-
-        compilationResult = FunctionCompileExportLibrary[compiledFunctionPath, functionExpression];
-        If[
-            (* if FunctionCompileExportLibrary didn't return a file path *)
-            !StringQ[compilationResult],
-            (* then print a failure message and exit *)
-            Print@TemplateApply[
-                "ERROR: failed to compile function from '`1`' to '`2`'.",
-                {functionPath, compiledFunctionPath}
-            ];
-            Print["FunctionCompileExportLibrary returned:"];
-            Echo[compilationResult];
-            Exit[1]
-        ];
-
-        Print@TemplateApply[
-            "Successfully compiled function from '`1`' to '`2`'.",
-            {functionPath, compiledFunctionPath}
-        ];
-
-        compilationResult
-    ]]
-]
-
-Print@TemplateApply["Successfully compiled `1` function(s)!", Length[compilationResults]]
-
+build /@ FileNames["*.c", $sourceDirectory];
 Exit[0]
