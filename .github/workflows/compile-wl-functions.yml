@@ -60,7 +60,7 @@ jobs:
           wolfram -script ./compile.wls
 
       - name: Archive compiled libraries
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: CompiledFunctionLibraries-${{ env.WOLFRAM_SYSTEM_ID }}
           path: |
@@ -102,7 +102,7 @@ jobs:
           wolframscript -debug -verbose -script ./compile.wls
 
       - name: Archive compiled libraries
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: CompiledFunctionLibraries-${{ env.WOLFRAM_SYSTEM_ID }}
           path: |
@@ -132,7 +132,7 @@ jobs:
           wolframscript -script ./compile.wls
 
       - name: Archive compiled libraries
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: CompiledFunctionLibraries-${{ env.WOLFRAM_SYSTEM_ID }}
           path: |
