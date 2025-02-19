@@ -64,7 +64,7 @@ jobs:
         with:
           name: CompiledFunctionLibraries-${{ env.WOLFRAM_SYSTEM_ID }}
           path: |
-            compiled/
+            LibraryResources/
           if-no-files-found: error
 
   FunctionCompile-MacOSX-x86-64:
@@ -106,7 +106,7 @@ jobs:
         with:
           name: CompiledFunctionLibraries-${{ env.WOLFRAM_SYSTEM_ID }}
           path: |
-            compiled/
+            LibraryResources/
           if-no-files-found: error
 
   FunctionCompile-Linux-x86-64:
@@ -136,5 +136,5 @@ jobs:
         with:
           name: CompiledFunctionLibraries-${{ env.WOLFRAM_SYSTEM_ID }}
           path: |
-            compiled/
+            LibraryResources/
           if-no-files-found: error
