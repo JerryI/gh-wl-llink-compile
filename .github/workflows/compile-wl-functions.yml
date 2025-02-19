@@ -6,7 +6,7 @@ jobs:
     env:
       WOLFRAM_SYSTEM_ID: Windows-x86-64
       WOLFRAMENGINE_INSTALL_MSI_DOWNLOAD_URL: https://files.wolframcdn.com/packages/winget/14.0.0.0/WolframEngine_14.0.0_WIN.msi
-      WOLFRAMENGINE_CACHE_KEY: WolframEngine-A
+      WOLFRAMENGINE_CACHE_KEY: WolframEngine-B
       WOLFRAMENGINE_INSTALLATION_SUBDIRECTORY: WolframEngine
     steps:
       - name: Check out repository
@@ -71,7 +71,7 @@ jobs:
     runs-on: macos-latest
     env:
       WOLFRAM_SYSTEM_ID: MacOSX-x86-64
-      WOLFRAMENGINE_CACHE_KEY: WolframEngine-A
+      WOLFRAMENGINE_CACHE_KEY: WolframEngine-B
       WOLFRAMENGINE_INSTALLATION_DIRECTORY: "/Applications/Wolfram Engine.app"
     steps:
       - name: Check out repository
