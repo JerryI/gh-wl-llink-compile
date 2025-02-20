@@ -18,16 +18,12 @@ jobs:
             WE_MODE=install bash ./.github/workflows/install_arm.sh
             sudo apt install libuv1-dev -y
 
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-        env:
-          WOLFRAMSCRIPT_ENTITLEMENTID: ${{ secrets.WOLFRAM_LICENSE_ENTITLEMENT_ID }}
-      
+
       - name: Compile function
         env:
           WOLFRAMSCRIPT_ENTITLEMENTID: ${{ secrets.WOLFRAM_LICENSE_ENTITLEMENT_ID }}
         run: |
-          /opt/Wolfram/WolframEngine/14.1.0/Executables/wolframscript -debug -verbose -script ./compile_uv_arm.wls
+          /opt/Wolfram/WolframEngine/14.1/SystemFiles/Kernel/Binaries/Linux-ARM64/wolframscript -debug -verbose -script ./compile_uv_arm.wls
 
       - name: Archive compiled libraries
         uses: actions/upload-artifact@v4
