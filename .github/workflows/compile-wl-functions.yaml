@@ -22,7 +22,7 @@ jobs:
         env:
           WOLFRAMSCRIPT_ENTITLEMENTID: ${{ secrets.WOLFRAM_LICENSE_ENTITLEMENT_ID }}
         run: |
-          wolframscript -debug -verbose -script ./compile_uv_arm.wls
+          /opt/Wolfram/WolframEngine/14.1.0/Executables/wolframscript -debug -verbose -script ./compile_uv_arm.wls
 
       - name: Archive compiled libraries
         uses: actions/upload-artifact@v4
