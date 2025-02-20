@@ -1,4 +1,4 @@
-name: Compile LLink ARM Linux
+name: Compile LLink ARM Linux and UV
 on: workflow_dispatch
 jobs:
   FunctionCompile-GNULinux-ARM:
@@ -26,7 +26,7 @@ jobs:
         run: |
           export PATH="${{ env.WOLFRAMENGINE_EXECUTABLES_DIRECTORY }}:$PATH"
 
-          wolframscript -debug -verbose -script ./compile2.wls
+          wolframscript -debug -verbose -script ./compile_uv_arm.wls
 
       - name: Archive compiled libraries
         uses: actions/upload-artifact@v4
