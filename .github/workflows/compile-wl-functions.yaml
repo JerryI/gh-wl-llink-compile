@@ -2,7 +2,7 @@ name: Compile LLink ARM Linux and UV
 on: workflow_dispatch
 jobs:
   FunctionCompile-GNULinux-ARM:
-    runs-on: macos-latest
+    runs-on: ubuntu-24.04-arm
     env:
       WOLFRAM_SYSTEM_ID: Linux-ARM
       WOLFRAMENGINE_CACHE_KEY: WolframEngine-BA
